@@ -6,7 +6,7 @@ echo "Starting server..."
 
 # شغّل المشروع
 npm install --force
-npm server/index.js
+npm run start
 
 # لو بدك يسجّل لوقات
 # node server.js >> logs.txt 2>&1
