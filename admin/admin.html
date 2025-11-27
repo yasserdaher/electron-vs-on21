@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>لوحة تحكم الأدمن</title>
+<style>
+body { font-family: Arial; background:#111; color:#fff; margin:0; padding:0; }
+header { padding:20px; background:#222; display:flex; justify-content:space-between; align-items:center; }
+header h1 { color:#00ffd5; margin:0; }
+header button { padding:10px 20px; cursor:pointer; background:#00ffd5; color:#000; border:none; border-radius:5px; }
+section { margin:20px; padding:20px; background:#222; border-radius:10px; }
+input, textarea { width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #00ffd5; background:#000; color:#00ffd5; }
+button { padding:10px 20px; border:none; border-radius:5px; background:#00ffd5; color:#000; cursor:pointer; }
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { border:1px solid #00ffd5; padding:10px; text-align:center; }
+th { background:#00ffd5; color:#000; }
+a.download { color:#00ffd5; text-decoration:none; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>لوحة تحكم الأدمن</h1>
+    <button id="logoutBtn" style="display:none;">تسجيل خروج</button>
+</header>
+
+<section id="loginSection">
+    <h2>تسجيل الدخول</h2>
+    <input id="username" placeholder="اسم المستخدم">
+    <input id="password" type="password" placeholder="كلمة المرور">
+    <button id="loginBtn">تسجيل دخول</button>
+</section>
+
+<section id="dashboard" style="display:none;">
+    <h2>رفع ملفات النظام/البرامج</h2>
+    <form id="uploadForm">
+        <input type="file" name="file" required>
+        <button type="submit">رفع الملف</button>
+    </form>
+
+    <h2>ملفات مرفوعة</h2>
+    <table id="filesTable">
+        <thead><tr><th>اسم الملف</th><th>تحميل</th><th>حذف</th></tr></thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>طلبات الوظائف</h2>
+    <table id="jobsTable">
+        <thead><tr><th>الاسم</th><th>البريد</th><th>الهاتف</th><th>ملف السيرة الذاتية</th><th>حذف</th></tr></thead>
+        <tbody></tbody>
+    </table>
+</section>
+
+<script>
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const loginSection = document.getElementById('loginSection');
+const dashboard = document.getElementById('dashboard');
+
+function showDashboard(){ 
+    loginSection.style.display='none';
+    dashboard.style.display='block';
+    logoutBtn.style.display='inline-block';
+}
+function hideDashboard(){ 
+    loginSection.style.display='block';
+    dashboard.style.display='none';
+    logoutBtn.style.display='none';
+}
+
+logoutBtn.onclick = ()=>{ 
+    localStorage.removeItem('adminToken'); 
+    hideDashboard(); 
+}
+
+// تسجيل الدخول
+loginBtn.onclick = async ()=>{
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const res = await fetch('/admin/login',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({username,password})
+    });
+    const data = await res.json();
+    if(data.token){
+        localStorage.setItem('adminToken', data.token);
+        showDashboard();
+        fetchAll();
+    } else alert(data.msg||'خطأ في تسجيل الدخول');
+}
+
+// جلب جميع البيانات
+async function fetchAll(){
+    const token = localStorage.getItem('adminToken');
+    if(!token) return;
+
+    // جلب الملفات
+    const filesRes = await fetch('/admin/files',{ headers:{ 'Authorization':'Bearer '+token }});
+    const files = await filesRes.json();
+    const filesBody = document.querySelector('#filesTable tbody');
+    filesBody.innerHTML='';
+    files.forEach(f=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${f}</td>
+                        <td><a href="/uploads/files/${f}" target="_blank">تحميل</a></td>
+                        <td><button onclick="deleteFile('${f}')">حذف</button></td>`;
+        filesBody.appendChild(tr);
+    });
+
+    // طلبات الوظائف
+    const jobsRes = await fetch('/admin/applications',{ headers:{ 'Authorization':'Bearer '+token }});
+    const jobs = await jobsRes.json();
+    const jobsBody = document.querySelector('#jobsTable tbody');
+    jobsBody.innerHTML='';
+    jobs.forEach(job=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML=`<td>${job.name}</td>
+                      <td>${job.email}</td>
+                      <td>${job.phone}</td>
+                      <td>${job.file?`<a href="/uploads/jobs/${job.file}" target="_blank">تحميل</a>`:'لا يوجد ملف'}</td>
+                      <td><button onclick="deleteJob('${job._id}')">حذف</button></td>`;
+        jobsBody.appendChild(tr);
+    });
+}
+
+// حذف ملف
+async function deleteFile(filename){
+    const token = localStorage.getItem('adminToken');
+    await fetch('/admin/files/'+filename,{
+        method:'DELETE',
+        headers:{ 'Authorization':'Bearer '+token }
+    });
+    fetchAll();
+}
+
+// حذف طلب وظيفة
+async function deleteJob(id){
+    const token = localStorage.getItem('adminToken');
+    await fetch('/admin/applications/'+id,{
+        method:'DELETE',
+        headers:{ 'Authorization':'Bearer '+token }
+    });
+    fetchAll();
+}
+
+// رفع ملف جديد
+document.getElementById('uploadForm').onsubmit = async (e)=>{
+    e.preventDefault();
+    const token = localStorage.getItem('adminToken');
+    const formData = new FormData(e.target);
+    await fetch('/admin/upload-file',{
+        method:'POST',
+        headers:{ 'Authorization':'Bearer '+token },
+        body: formData
+    });
+    e.target.reset();
+    fetchAll();
+}
+
+// تحقق من التوكن عند فتح الصفحة
+if(localStorage.getItem('adminToken')){
+    showDashboard();
+    fetchAll();
+}
+</script>
+
+</body>
+</html>

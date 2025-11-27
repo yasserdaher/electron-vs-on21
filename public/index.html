@@ -1,0 +1,360 @@
+
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electron Vision</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- CSS الذي زودتني به -->
+    <style>
+        /* ضع هنا نفس CSS اللي أعطيتني إياه */
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            font-family:'Poppins',sans-serif;
+            background:#050505;
+            color:#fff;
+            overflow-x:hidden;
+        }
+        .bg-glow{
+            position:fixed;width:600px;height:600px;
+            background:radial-gradient(circle,#00ffcc55 0%,transparent 70%);
+            top:-200px;left:-200px;
+            filter:blur(90px);z-index:-1;
+            animation:moveGlow 10s infinite alternate ease-in-out;
+        }
+        @keyframes moveGlow{
+            from{transform:translate(0,0)}
+            to{transform:translate(150px,80px)}
+        }
+        nav{
+            position:fixed;top:0;width:100%;
+            display:flex;justify-content:space-between;
+            padding:20px 50px;
+            background:rgba(0,0,0,0.35);
+            backdrop-filter:blur(10px);
+            border-bottom:1px solid #0f0f0f;
+            z-index:1000;
+        }
+        nav h1{
+            font-size:26px;color:#00ffd5;
+            letter-spacing:2px;text-shadow:0 0 15px #00ffd5;
+        }
+        nav ul{
+            display:flex;gap:35px;list-style:none;
+        }
+        nav ul li a{
+            color:#fff;text-decoration:none;font-size:17px;transition:.3s;
+        }
+        nav ul li a:hover{
+            color:#00ffd5;text-shadow:0 0 10px #00ffd5;
+        }
+        .hero{
+            height:100vh;display:flex;flex-direction:column;
+            justify-content:center;align-items:center;text-align:center;
+            padding:20px;
+            background:url('https://images.unsplash.com/photo-1527443154391-507e9dc6c5cc?auto=format&fit=crop&w=1600&q=80') center/cover fixed;
+            position:relative;
+        }
+        .hero::after{
+            content:"";position:absolute;inset:0;
+            background:rgba(0,0,0,0.7);backdrop-filter:blur(3px);
+        }
+        .hero-content{
+            position:relative;z-index:2;
+            animation:fadeUp 1.6s ease;
+        }
+        @keyframes fadeUp{
+            from{opacity:0;transform:translateY(20px)}
+            to{opacity:1;transform:translateY(0)}
+        }
+        .hero h2{
+            font-size:70px;color:#00ffd5;
+            text-shadow:0 0 30px #00ffd5;
+        }
+        .hero p{
+            margin-top:10px;font-size:24px;color:#eee;
+        }
+        .hero button{
+            margin-top:40px;padding:15px 45px;background:#00ffd5;
+            color:#000;border:none;border-radius:10px;
+            cursor:pointer;font-size:20px;transition:.3s;
+        }
+        .hero button:hover{
+            transform:scale(1.07);background:#00e6c2;
+        }
+        section{
+            padding:120px 70px;text-align:center;
+        }
+        section h3{
+            font-size:38px;margin-bottom:25px;color:#00ffd5;
+            text-shadow:0 0 20px #00ffd5;
+        }
+        .cards{
+            display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-top:50px;
+        }
+        .card{
+            width:300px;background:rgba(10,10,10,0.65);
+            backdrop-filter:blur(10px);
+            border:1px solid #0f0f0f;border-radius:18px;
+            padding:30px;transition:.4s;
+            box-shadow:0 0 12px #003f32;
+        }
+        .card:hover{
+            transform:translateY(-12px);
+            box-shadow:0 0 25px #00ffd5;
+        }
+        footer{
+            padding:30px;text-align:center;background:#000;color:#777;font-size:15px;
+        }
+        .download-box{
+            margin-top:40px;
+            padding:20px;
+            background:#00000080;
+            border:1px solid #00ffd5;
+            border-radius:12px;
+            max-width:400px;
+            margin:auto;
+        }
+        .download-box a{
+            color:#00ffd5;
+            text-decoration:none;
+            font-size:20px;
+            display:block;
+            margin-top:10px;
+        }
+        .contact-card{
+            border:1px solid #0f0f0f;
+            border-radius:18px;
+            padding:30px;
+            transition:.4s;
+            box-shadow:0 0 12px #003f32;
+            max-width:500px;
+            margin:40px auto;
+            background: #000000d0;
+            color:#00ffd5;
+            font-family: Arial, sans-serif;
+        }
+        .contact-card:hover{
+            transform:translateY(-12px);
+            box-shadow:0 0 25px #00ffd5;
+        }
+        .contact-card h2{
+            text-align:center;
+            color:#00ffd5;
+            margin-bottom:20px;
+        }
+        .contact-card a{
+            color:#00ffd5;
+            text-decoration:none;
+        }
+        .contact-card input, 
+        .contact-card textarea{
+            width:100%;
+            padding:10px;
+            margin-bottom:15px;
+            border:1px solid #00ffd5;
+            border-radius:12px;
+            background:#00000080;
+            color:#00ffd5;
+        }
+        .contact-card input:focus,
+        .contact-card textarea:focus{
+            outline:none;
+            border-color:#00ffcc;
+            box-shadow:0 0 8px #00ffd5;
+        }
+        .contact-card button{
+            width:100%;
+            padding:12px;
+            background:#00ffd5;
+            color:#000;
+            border:none;
+            border-radius:12px;
+            font-size:16px;
+            cursor:pointer;
+            transition:.3s;
+        }
+        .contact-card button:hover{
+            background:#00ffcc;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <nav>
+        <h1>Electron Vision</h1>
+        <ul>
+            <li><a href="#job"> تقديم طلب توظيف</a></li>
+            <li><a href="#about">عن الشركة</a></li>
+            <li><a href="#products">برامجنا</a></li>
+            <li><a href="#download">تحميل</a></li>
+            <li><a href="#contact">اتصل بنا</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Electron Vision</h2>
+            <p>نصنع أفضل الأنظمة والبرامج المستقبلية</p>
+            <button onclick="document.getElementById('download').scrollIntoView({behavior:'smooth'})">تحميل الآن</button>
+        </div>
+    </section>
+
+    <section id="about">
+        <h3>عن الشركة</h3>
+        <p>شركة Electron Vision متخصصة في تطوير أنظمة التشغيل والبرامج الذكية والمبتكرة لتجربة استخدام سلسة وآمنة.</p>
+    </section>
+
+    <section id="products">
+        <h3>برامجنا</h3>
+        <div class="cards">
+            <div class="card">
+                <h4>نظام ELVI 1.0</h4>
+                <p>أحدث نظام تشغيل سريع وآمن للمستخدمين والمطورين.</p>
+            </div>
+            <div class="card">
+                <h4>برنامج Vision Suite</h4>
+                <p>مجموعة أدوات متكاملة لتحسين أداء النظام والإنتاجية.</p>
+            </div>
+            <div class="card">
+                <h4>تطبيقات ذكية</h4>
+                <p>برامج ذكية تعمل على جميع الأجهزة مع واجهة مستخدم حديثة.</p>
+            </div>
+        </div>
+    </section>
+
+   <section id="download">
+    <h3>تحميل البرامج</h3>
+    <div id="download-box" class="download-box">
+        <!-- الملفات سيتم تحميلها هنا بواسطة جافاسكريبت -->
+    </div>
+</section>
+
+
+    <section id="contact">
+        <div class="contact-card">
+<h2>اتصل بنا</h2>
+<p>للتواصل مع خدمة العملاء عبر هذه الصفحات:</p>
+
+
+<p>WhatsApp: +963 951 940 804 / +963 954 190 289</p>
+
+
+<p>Email: electron.visionn@gmail.com</p>
+        </div>
+    </section>
+<section id="job">
+    <div class="contact-card">
+        <h2>تقديم طلب وظيفة</h2>
+        <form action="/apply" method="POST" enctype="multipart/form-data">
+            <input type="text" name="name" placeholder="الاسم" required>
+            <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+            <input type= "#" name="phone" placeholder="رقم الهاتف" required>
+        <h2>ارفع صور وفيديوهات لمشاريع خاصة بك واكتب
+             مختصر عن خبراتك السابقة والمهارات التي تمتلكها
+        </h2>
+            <input type="file" name="resume" required>
+            <button type="submit">إرسال الطلب</button>
+        </form>
+    </div>
+</section>
+
+
+    <footer>
+        © 2025 Electron Vision. جميع الحقوق محفوظة.
+    </footer>
+    <script>
+// سكرول ناعم لكل الروابط
+document.querySelectorAll('nav ul li a').forEach(link => {
+    link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+});async function loadDownloads() {
+ const res = await fetch('/files');
+const files = await res.json();
+files.forEach(f => {
+    const a = document.createElement('a');
+    a.href = '/download/file/' + f;
+    a.textContent = 'تحميل ' + f;
+    document.getElementById('download-box').appendChild(a);
+});
+
+}
+loadDownloads();
+
+
+// زر التحميل في الهيرو
+document.querySelector('.hero button').addEventListener('click', () => {
+    const target = document.getElementById('download');
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+});
+
+// تأثير بسيط على الكروت عند المرور
+document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-15px)';
+    });
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0)';
+    });
+});
+// فحص وارسال نموذج التواصل
+const contactBtn = document.querySelector('#contact button');
+
+if (contactBtn) {
+    contactBtn.addEventListener('click', async () => {
+        const name = document.querySelector('#contact input[type="text"]').value.trim();
+        const email = document.querySelector('#contact input[type="email"]').value.trim();
+        const message = document.querySelector('#contact textarea').value.trim();
+
+        if (!name || !email || !message) {
+            alert('يرجى ملء جميع الحقول');
+            return;
+        }
+
+        try {
+            const response = await fetch('/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, message })
+            });
+
+            const result = await response.json();
+            alert(result.msg); // من السيرفر: "تم إرسال الرسالة بنجاح" أو خطأ
+        } catch (err) {
+            console.error(err);
+            alert('حدث خطأ، حاول مرة أخرى');
+        }
+    });
+}
+
+// فحص نموذج الوظيفة
+const jobForm = document.querySelector('#job form');
+if (jobForm) {
+    jobForm.addEventListener('submit', e => {
+        const name = jobForm.querySelector('input[name="name"]');
+        const email = jobForm.querySelector('input[name="email"]');
+        const phone = jobForm.querySelector('input[name="phone"]');
+        const file = jobForm.querySelector('input[name="resume"]');
+
+        if (!name.value.trim() || !email.value.trim() || !phone.value.trim() || !file.files.length) {
+            e.preventDefault();
+            alert('املأ كل الحقول وارفع ملف قبل إرسال الطلب');
+        }
+    });
+}
+
+// تأثير خفيف أثناء السحب فوق الموقع (cursor glow)
+document.addEventListener('mousemove', e => {
+    const glow = document.querySelector('.bg-glow');
+    if (glow) {
+        glow.style.left = (e.clientX - 300) + 'px';
+        glow.style.top = (e.clientY - 300) + 'px';
+    }
+});
+</script>
+
+</body>
+</html>   
